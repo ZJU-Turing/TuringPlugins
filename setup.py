@@ -1,0 +1,26 @@
+import os
+from setuptools import setup, find_packages
+
+
+setup(
+    name='mkdocs-turing-plugins',
+    version='0.0.1',
+    author='ZJU Turing',
+    description='A MkDocs plugin used in TuringCourses',
+    url='https://github.com/ZJU-Turing/TuringPlugins',
+    python_requires='>=3.5',
+    install_requires=[
+        'mkdocs',
+    ],
+    entry_points={
+        'mkdocs.plugins': [
+            'template = mkdocs_turing_plugins.plugin:TemplatePlugin'
+        ]
+    },
+    include_package_data=True,
+    package_data={
+        'src': [
+            'templates/*.html'
+        ]
+    }
+)
