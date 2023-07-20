@@ -11,6 +11,7 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         'mkdocs',
+        'GitPython'
     ],
     entry_points={
         'mkdocs.plugins': [
