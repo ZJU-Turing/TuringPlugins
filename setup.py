@@ -14,7 +14,7 @@ setup(
     ],
     entry_points={
         'mkdocs.plugins': [
-            'template = mkdocs_turing_plugins.plugin:TemplatePlugin'
+            'turing_changelog = mkdocs_turing_plugins.changelog:ChangelogPlugin'
         ]
     },
     include_package_data=True,
