@@ -16,6 +16,9 @@ TEMPLATE = """
 ---
 
 <style>
+#footer-wrapper {{
+    text-wrap: nowrap;
+}}
 #footer-wrapper > p {{
     display: inline-flex;
     align-items: center;
@@ -23,8 +26,9 @@ TEMPLATE = """
     margin-top: -10px;
 }}
 .contributors {{
-    height: 30px;
     min-width: 30px;
+    line-height: 0;
+    text-wrap: wrap;
 }}
 .contributors > a {{
     margin-right: -8px;
