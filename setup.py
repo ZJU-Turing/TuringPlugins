@@ -15,7 +15,8 @@ setup(
     ],
     entry_points={
         'mkdocs.plugins': [
-            'turing_changelog = mkdocs_turing_plugins.changelog:ChangelogPlugin'
+            'turing_changelog = mkdocs_turing_plugins.changelog:ChangelogPlugin',
+            'turing_contributors = mkdocs_turing_plugins.contributors:ContributorsPlugin',
         ]
     },
     include_package_data=True,
