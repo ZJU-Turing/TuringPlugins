@@ -113,6 +113,15 @@ class ContributorsPlugin(BasePlugin):
         return "1970-01-01"
 
     def _get_contributors(self, path: str) -> str:
+        contributors = self._fetch_contributors_from_github(path)
+        if "general" in path and not path.endswith("index.md"):
+            contributors.extend(
+                self._fetch_contributors_from_github("docs/general/data.csv")
+            )
+        raw = Template(CONTRIBUTORS_TEMPLATE).render(contributors=contributors)
+        return re.sub(r"(\n| {2,})", "", raw).strip()
+
+    def _fetch_contributors_from_github(self, path: str) -> list:
         fetch_url = f"https://github.com/ZJU-Turing/TuringCourses/contributors-list/master/{path}"
         contributors = []
         try:
@@ -135,6 +144,4 @@ class ContributorsPlugin(BasePlugin):
                     "avatar": result[1].split("?")[0],
                     "url": f"https://github.com/{result[0]}"
                 })
-        
-        raw = Template(CONTRIBUTORS_TEMPLATE).render(contributors=contributors)
-        return re.sub(r"(\n| {2,})", "", raw).strip()
+        return contributors
