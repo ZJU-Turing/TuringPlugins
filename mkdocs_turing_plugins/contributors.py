@@ -108,6 +108,8 @@ class ContributorsPlugin(BasePlugin):
         return markdown
     
     def _get_last_updated(self, path: str) -> str:
+        if "general" in path and not path.endswith("index.md"):
+            path = "docs/general/data.csv"
         for commit in self.repo.iter_commits(paths=path):
             return commit.committed_datetime.strftime("%Y-%m-%d")
         return "1970-01-01"
@@ -118,6 +120,7 @@ class ContributorsPlugin(BasePlugin):
             contributors.extend(
                 self._fetch_contributors_from_github("docs/general/data.csv")
             )
+            contributors = self._distinct(contributors)
         raw = Template(CONTRIBUTORS_TEMPLATE).render(contributors=contributors)
         return re.sub(r"(\n| {2,})", "", raw).strip()
 
@@ -145,3 +148,11 @@ class ContributorsPlugin(BasePlugin):
                     "url": f"https://github.com/{result[0]}"
                 })
         return contributors
+
+    @staticmethod
+    def _distinct(contributors: list) -> list:
+        ret = []
+        for contributor in contributors:
+            if contributor["id"] not in map(lambda x: x["id"], ret):
+                ret.append(contributor)
+        return ret

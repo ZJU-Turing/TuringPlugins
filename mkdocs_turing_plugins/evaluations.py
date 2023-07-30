@@ -44,7 +44,10 @@ class EvaluationsPlugin(BasePlugin):
         if not page.meta.get("evaluations"):
             return markdown
         
-        markdown += self._get_page_markdown(page.meta.get("evaluations").strip())
+        markdown = markdown.replace(
+            "{{ evaluations }}",
+            self._get_page_markdown(page.meta.get("evaluations").strip())
+        )
 
         return markdown
     
