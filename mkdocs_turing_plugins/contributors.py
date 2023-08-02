@@ -17,18 +17,22 @@ TEMPLATE = """
 
 <style>
 #footer-wrapper {{
-    text-wrap: nowrap;
+    white-space: nowrap;
 }}
 #footer-wrapper > p {{
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 5px;
     margin-top: -10px;
 }}
+#footer-wrapper > p > .twemoji > svg {{
+    max-width: none;
+}}
 .contributors {{
     min-width: 30px;
     line-height: 0;
-    text-wrap: wrap;
+    white-space: normal;
+    width: 100%;
 }}
 .contributors > a {{
     margin-right: -8px;
