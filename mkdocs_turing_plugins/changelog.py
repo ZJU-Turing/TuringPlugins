@@ -3,6 +3,7 @@ import re, os
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
+from mkdocs.utils.meta import get_data
 
 from typing import Any, Dict
 
@@ -68,13 +69,13 @@ class ChangelogPlugin(BasePlugin):
         if not page.meta.get("changelog"):
             return markdown
         
-        changelogs = self._get_changelog_items()
+        changelogs = self._get_changelog_items(page)
 
         markdown = markdown.replace("{{ changelog }}", changelogs)
 
         return markdown
     
-    def _get_changelog_items(self):
+    def _get_changelog_items(self, page: Page):
         template = """- <span style="font-family: var(--md-code-font-family)">{time} [{commit_sha}]({commit_url}) </span>{commit_message}{links}"""
         res = ""
         year = 1970
@@ -105,6 +106,9 @@ class ChangelogPlugin(BasePlugin):
                 title = get_title(doc_path).strip()
                 doc_url = doc_path.replace("docs/", "https://zju-turing.github.io/TuringCourses/").replace("index.md", "")
                 search_strs = [title] + self.abbrs.get(title, [])
+                _, meta = get_data(open(doc_path, "r", encoding="utf-8").read())
+                if meta.get("abbrs"):
+                    search_strs += meta.get("abbrs")
                 for search_str in search_strs:
                     if search_str in commit_message:
                         commit_message = commit_message.replace(search_str, f"[{search_str}]({doc_url})")
