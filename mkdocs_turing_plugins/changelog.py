@@ -39,7 +39,12 @@ class ChangelogPlugin(BasePlugin):
         "安全攻防实践（CTF）": ["AAA 短学期"],
         "计算机系统 Ⅲ": ["计算机系统 III"],
         "人工智能基础/引论": ["人工智能基础"],
-        "编译原理": ["compiler"]
+        "编译原理": ["compiler"],
+        "机器学习": ["ML"],
+        "数据安全与隐私保护": ["数据安全"],
+        "软件安全原理和实践": ["软件安全"],
+        "毛泽东思想与中国特色社会主义理论体系概论（H）": ["毛概"],
+        "习近平新时代中国特色社会主义思想概论": ["习概"],
     }
     
     def on_config(self, config: config_options.Config, **kwargs) -> Dict[str, Any]:
@@ -81,6 +86,8 @@ class ChangelogPlugin(BasePlugin):
             commit_sha = commit.hexsha[:7]
             commit_url = f"https://github.com/ZJU-Turing/TuringCourses/commit/{commit.hexsha}"
             message = commit.message.split("\n")[0]
+            if message.startswith("Merge pull request"):
+                continue
             commit_message = re.sub(r"#(\d+)", r"[#\1](https://github.com/ZJU-Turing/TuringCourses/pull/\1)", message)
             time = commit.committed_datetime.strftime("%m-%d")
 
