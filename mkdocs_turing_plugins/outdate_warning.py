@@ -85,7 +85,11 @@ class OutdateWarningPlugin(BasePlugin):
                 return markdown
             
         file_path = page.file.abs_src_path
+        if "general" in page.file.src_uri:
+            file_path = "docs/general/data.csv"
         page_timestamp = get_latest_commit_timestamp(file_path)
+        if "general" in page.file.src_uri:
+            print(page_timestamp)
         diff_month = int(self.config.get("month"))
 
         markdown = "!!! warning \"%s\"\n\n\n%s\n%s%s" % (page_timestamp, markdown, CSS_INJECTION, JS_INJECTION % diff_month)
