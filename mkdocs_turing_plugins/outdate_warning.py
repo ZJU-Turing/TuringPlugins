@@ -24,7 +24,7 @@ JS_INJECTION = """
     let diff_month = (time_current - time_updated) / 1000 / 60 / 60 / 24 / 12;
     if (diff_month > %f) {
         banner.style.display = "flow-root";
-        child.innerHTML = "本页面最后更新于 " + Math.round(diff_month) + " 个月前，内容可能已经过时。";
+        child.innerHTML = "本页面最后更新于 " + Math.round(diff_month) + " 个月前，内容可能已经过时，请注意鉴别";
     }
 })();
 </script>
