@@ -18,6 +18,7 @@ setup(
             'turing_changelog = mkdocs_turing_plugins.changelog:ChangelogPlugin',
             'turing_contributors = mkdocs_turing_plugins.contributors:ContributorsPlugin',
             'turing_evaluations = mkdocs_turing_plugins.evaluations:EvaluationsPlugin',
+            'turing_outdate_warning = mkdocs_turing_plugins.outdate_warning:OutdateWarningPlugin',
         ]
     },
     include_package_data=True,
