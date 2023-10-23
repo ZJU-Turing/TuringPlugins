@@ -21,7 +21,7 @@ JS_INJECTION = """
     let child = banner.children[0];
     let time_updated = new Date(child.innerText * 1000);
     let time_current = new Date();
-    let diff_month = (time_current - time_updated) / 1000 / 60 / 60 / 24 / 12;
+    let diff_month = (time_current - time_updated) / 1000 / 60 / 60 / 24 / 30;
     if (diff_month > %f) {
         banner.style.display = "flow-root";
         child.innerHTML = "本页面最后更新于 " + Math.round(diff_month) + " 个月前，内容可能已经过时，请注意鉴别";
@@ -39,7 +39,7 @@ def remove_prefix(text, prefix):
 class OutdateWarningPlugin(BasePlugin):
     config_scheme = (
         ("enabled", config_options.Type(bool, default=True)),
-        ("month", config_options.Type(int, default=20)),
+        ("month", config_options.Type(int, default=12)),
         ("exclude", config_options.Type(list, default=[])),
         ("exclude_todo", config_options.Type(bool, default=True)),
     )
