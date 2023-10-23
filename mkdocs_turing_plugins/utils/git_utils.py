@@ -1,6 +1,6 @@
 import os
 import time
-from git import (Repo, Git)
+from git import Repo, Git
 
 _repo_cache = {}
 
@@ -34,5 +34,6 @@ def get_latest_commit_timestamp(path: str) -> int:
 
     return int(commit_timestamp)
 
-# print("Stamp: %d" % get_latest_commit_timestamp("./mkdocs_turing_plugins/utils/git_utils.py"))
-# print("Stamp: %d" % get_latest_commit_timestamp("./mkdocs_turing_plugins/utils/markdown_utils.py"))
+if __name__ == "__main__":
+    print("Stamp: %d" % get_latest_commit_timestamp("./mkdocs_turing_plugins/utils/git_utils.py"))
+    print("Stamp: %d" % get_latest_commit_timestamp("./mkdocs_turing_plugins/utils/markdown_utils.py"))
