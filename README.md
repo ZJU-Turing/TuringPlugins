@@ -8,8 +8,8 @@
 只用于 TuringCourses，所以不考虑发布 PyPI，只能从源码安装：
 
 ```shell
-$ git clone https://github.com/ZJU-Turing/mkdocs-turing-plugins.git
-$ cd mkdocs-turing-plugins
+$ git clone https://github.com/ZJU-Turing/TuringPlugins.git
+$ cd TuringPlugins
 $ pip install . # or pip install -e .
 ```
 
