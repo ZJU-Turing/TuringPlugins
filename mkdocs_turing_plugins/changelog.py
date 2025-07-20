@@ -14,6 +14,7 @@ from .utils.markdown_utils import get_title
 class ChangelogPlugin(BasePlugin):
     config_scheme = (
         ("enabled", config_options.Type(bool, default=True)),
+        ("grave", config_options.Type(bool, default=False)),
     )
 
     enabled = True
@@ -104,7 +105,10 @@ class ChangelogPlugin(BasePlugin):
             extra_count = 0
             for doc_path in docs_filenames:
                 title = get_title(doc_path).strip()
-                doc_url = doc_path.replace("docs/", "https://zju-turing.github.io/TuringCourses/").replace("index.md", "")
+                if self.config.get("grave"):
+                    doc_url = doc_path.replace("docs/", "https://zju-turing.github.io/TuringCoursesGrave/").replace("index.md", "")
+                else:
+                    doc_url = doc_path.replace("docs/", "https://zju-turing.github.io/TuringCourses/").replace("index.md", "")
                 search_strs = [title] + self.abbrs.get(title, [])
                 _, meta = get_data(open(doc_path, "r", encoding="utf-8").read())
                 if meta.get("abbrs"):

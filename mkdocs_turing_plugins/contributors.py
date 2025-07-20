@@ -66,6 +66,7 @@ class ContributorsPlugin(BasePlugin):
     config_scheme = (
         ("enabled", config_options.Type(bool, default=True)),
         ('disable_serve', config_options.Type(bool, default=True)),
+        ('grave', config_options.Type(bool, default=False)),
     )
 
     enabled = True
@@ -129,7 +130,10 @@ class ContributorsPlugin(BasePlugin):
         return re.sub(r"(\n| {2,})", "", raw).strip()
 
     def _fetch_contributors_from_github(self, path: str) -> list:
-        fetch_url = f"https://github.com/ZJU-Turing/TuringCourses/contributors-list/master/{path}"
+        if self.config.get("grave"):
+            fetch_url = f"https://github.com/ZJU-Turing/TuringCoursesGrave/contributors-list/master/{path}"
+        else:
+            fetch_url = f"https://github.com/ZJU-Turing/TuringCourses/contributors-list/master/{path}"
         contributors = []
         try:
             res = requests.get(fetch_url)
