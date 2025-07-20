@@ -6,7 +6,7 @@ from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
 from mkdocs.utils.meta import get_data
 
-from typing import Any, Dict
+from typing import Any, Dict, Literal
 
 from git import Repo
 
@@ -19,6 +19,7 @@ class ChangelogPlugin(BasePlugin):
     )
 
     enabled = True
+    serve = False
 
     abbrs = {
         "嵌入式系统": ["嵌入式"],
@@ -49,6 +50,10 @@ class ChangelogPlugin(BasePlugin):
         "毛泽东思想与中国特色社会主义理论体系概论（H）": ["毛概"],
         "习近平新时代中国特色社会主义思想概论": ["习概"],
     }
+
+    def on_startup(self, *, command: Literal['build', 'gh-deploy', 'serve'], dirty: bool) -> None:
+        if command == "serve":
+            self.serve = True
     
     def on_config(self, config: config_options.Config, **kwargs) -> Dict[str, Any]:
         if not self.enabled:
@@ -81,7 +86,14 @@ class ChangelogPlugin(BasePlugin):
         template = """- <span style="font-family: var(--md-code-font-family)">{time} [{commit_sha}]({commit_url}) </span>{commit_message}{links}"""
         res = ""
         year = 1970
+        checkouted = False
+        now_commit = self.repo.head.commit
         for commit in self.repo.iter_commits():
+            if (not self.serve and not checkouted and \
+                not self.config.get("grave") and \
+                commit.committed_datetime < datetime.datetime(2025, 7, 20, 0, 0, 0, tzinfo=datetime.timezone.utc)):
+                self.repo.git.checkout('v1.0.0')
+                checkouted = True
             now_year = commit.committed_datetime.year
             if now_year != year:
                 year = now_year
@@ -109,7 +121,9 @@ class ChangelogPlugin(BasePlugin):
             extra_count = 0
             for doc_path in docs_filenames:
                 title = get_title(doc_path).strip()
-                if self.config.get("grave"):
+                if title in ["专业必修课", "专业选修课"]:
+                    continue
+                if self.config.get("grave") or commit.committed_datetime < datetime.datetime(2025, 7, 20, 0, 0, 0, tzinfo=datetime.timezone.utc):
                     doc_url = doc_path.replace("docs/", "https://zju-turing.github.io/TuringCoursesGrave/").replace("index.md", "")
                 else:
                     doc_url = doc_path.replace("docs/", "https://zju-turing.github.io/TuringCourses/").replace("index.md", "")
@@ -135,4 +149,6 @@ class ChangelogPlugin(BasePlugin):
                 links = "\n    - 🔗 " + links
             
             res += template.format(commit_sha=commit_sha, commit_url=commit_url, commit_message=commit_message, links=links, time=time) + "\n"
+        
+        self.repo.git.checkout(now_commit.hexsha)
         return res
