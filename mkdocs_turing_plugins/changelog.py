@@ -1,4 +1,5 @@
 import re, os
+import datetime
 
 from mkdocs.config import config_options
 from mkdocs.plugins import BasePlugin
@@ -86,7 +87,10 @@ class ChangelogPlugin(BasePlugin):
                 year = now_year
                 res += f"\n## {year} 年\n"
             commit_sha = commit.hexsha[:7]
-            commit_url = f"https://github.com/ZJU-Turing/TuringCourses/commit/{commit.hexsha}"
+            if self.config.get("grave") and commit.committed_datetime > datetime.datetime(2025, 7, 20, 0, 0, 0, tzinfo=datetime.timezone.utc):
+                commit_url = f"https://github.com/ZJU-Turing/TuringCoursesGrave/commit/{commit.hexsha}"
+            else:
+                commit_url = f"https://github.com/ZJU-Turing/TuringCourses/commit/{commit.hexsha}"
             message = commit.message.split("\n")[0]
             if message.startswith("Merge pull request"):
                 continue
