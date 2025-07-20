@@ -102,8 +102,14 @@ class ContributorsPlugin(BasePlugin):
             return markdown
 
         src_path = "docs/" + page.file.src_path
+        if page.meta.get("grave"):
+            old_path = "docs/" + page.meta.get("grave").split("TuringCoursesGrave/")[1]
+            if not old_path.endswith("index.md"):
+                old_path += "index.md"
+        else:
+            old_path = None
         last_updated = self._get_last_updated(src_path)
-        contributors = self._get_contributors(src_path)
+        contributors = self._get_contributors(src_path, old_path)
 
         markdown = markdown + TEMPLATE.format(
             last_updated=last_updated,
@@ -119,19 +125,21 @@ class ContributorsPlugin(BasePlugin):
             return commit.committed_datetime.strftime("%Y-%m-%d")
         return "1970-01-01"
 
-    def _get_contributors(self, path: str) -> str:
-        contributors = self._fetch_contributors_from_github(path)
+    def _get_contributors(self, path: str, old_path: str | None) -> str:
+        contributors = self._fetch_contributors_from_github(path, old_path)
         if "general" in path and not path.endswith("index.md"):
             contributors.extend(
-                self._fetch_contributors_from_github("docs/general/data.csv")
+                self._fetch_contributors_from_github("docs/general/data.csv", None)
             )
             contributors = self._distinct(contributors)
         raw = Template(CONTRIBUTORS_TEMPLATE).render(contributors=contributors)
         return re.sub(r"(\n| {2,})", "", raw).strip()
 
-    def _fetch_contributors_from_github(self, path: str) -> list:
+    def _fetch_contributors_from_github(self, path: str, old_path: str | None) -> list:
         if self.config.get("grave"):
             fetch_url = f"https://github.com/ZJU-Turing/TuringCoursesGrave/contributors-list/master/{path}"
+        elif old_path is not None:
+            fetch_url = f"https://github.com/ZJU-Turing/TuringCourses/contributors-list/v1.0.0/{old_path}"
         else:
             fetch_url = f"https://github.com/ZJU-Turing/TuringCourses/contributors-list/master/{path}"
         contributors = []
@@ -155,6 +163,35 @@ class ContributorsPlugin(BasePlugin):
                     "avatar": result[1].split("?")[0],
                     "url": f"https://github.com/{result[0]}"
                 })
+        if self.config.get("grave") or old_path is None:
+            return contributors
+        fetch_url = f"https://github.com/ZJU-Turing/TuringCourses/contributors-list/master/{path}"
+        try:
+            res = requests.get(fetch_url)
+            res.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            logger.warning(f"Failed to fetch contributors list from {fetch_url}: {err}")
+        except Exception as err:
+            logger.warning(f"Exception occurred when fetching {fetch_url}: {err}")
+        else:
+            content = res.text
+            re_results = re.findall(
+                r"<a.*?href=\"/(?P<id>.*?)\".*?src=\"(?P<avatar>.*?)\"",
+                content,
+                re.DOTALL
+            )
+            for result in re_results:
+                found = False
+                for contributor in contributors:
+                    if result[0] == contributor["id"]:
+                        found = True
+                        break
+                if not found:
+                    contributors.append({
+                        "id": result[0],
+                        "avatar": result[1].split("?")[0],
+                        "url": f"https://github.com/{result[0]}"
+                    })
         return contributors
 
     @staticmethod
