@@ -70,9 +70,13 @@ class EvaluationsPlugin(BasePlugin):
                     markdown += f"### {course} {self.lab_tag}\n\n"
                 else:
                     markdown += f"### {course}\n\n"
-                for grade in list(grades_set)[::-1]:
+                for grade in sorted(grades_set, reverse=True):
                     markdown += f'=== "{grade} 级"\n'
-                    grade_items = list(filter(lambda x: int(x["年级"]) == grade, course_items))
+                    grade_items = sorted(
+                        filter(lambda x: int(x["年级"]) == grade, course_items),
+                        key=lambda x: float(x["评分"]),
+                        reverse=True
+                    )                    
                     for item in grade_items:
                         formated = template.format(
                             score=item["评分"],
