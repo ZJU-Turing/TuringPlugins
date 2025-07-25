@@ -1,6 +1,7 @@
 # mkdocs-turing-plugins
 
-> **Warning** 基本功能正在开发中
+> [!IMPORTANT]
+> 本仓库中插件的所有功能已改为更优雅且方便的 [hook](https://www.mkdocs.org/user-guide/configuration/#hooks) 实现，构建 [TuringCourses](https://github.com/ZJU-Turing/TuringCourses) 将不再需要安装本插件，因此本仓库弃用。如有功能性修改，请直接向 [TuringCourses 中的 hooks 文件夹](https://github.com/ZJU-Turing/TuringCourses/tree/master/hooks)提交 Pull Request。
 
 一个专门用在 [TuringCourses](https://github.com/ZJU-Turing/TuringCourses) 文档上的 mkdocs 插件集合。
 
